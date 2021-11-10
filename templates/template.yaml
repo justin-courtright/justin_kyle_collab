@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Application Stack
+
+Parameters:
+  Stage:
+    Description: "The development environment stage"
+    Default: "dev"
+
+Conditions:
+
+Resources:
+  MyTopicRule:
+    Type: AWS::IoT::TopicRule
+    Properties:
+      RuleName: !Sub RealTimeDataRule-${Stage}
+      TopicRulePayload:
+        RuleDisabled: 'false'
+        Sql: "select * from 'dt/real-time-data'"
+        Actions:
+          - Kinesis:
+              RoleArn : 
+              StreamName : !Ref RealTimeDataStream
+
+  RealTimeDataStream:
+    Type: AWS::Kinesis::Stream
+    Properties:
+      Name: !Sub RealTimeDataStream-${Stage}
+      ShardCount: 1
+
+  RealTimeRuleRole:
+    Type: AWS::IAM::Role
+    Properties:
+      
+
+Outputs:
+
